@@ -25,7 +25,7 @@ public class GatewayRouteConfig {
                                 "/api/v1/auth/**",
                                 "/api/v1/admin/users/**"
                         )
-                        .uri("lib://INSIGHTON-AUTH"))
+                        .uri("lb://INSIGHTON-AUTH"))
 
                 .route("core-route", r -> r
                         .path(
@@ -57,6 +57,5 @@ public class GatewayRouteConfig {
                         .uri("lb://INSIGHTON-RULEENGINE"))
 
                 .build();
-
     }
 }
