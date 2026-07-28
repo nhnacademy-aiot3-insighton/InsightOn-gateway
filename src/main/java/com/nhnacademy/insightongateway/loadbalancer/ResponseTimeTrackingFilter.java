@@ -3,22 +3,16 @@ package com.nhnacademy.insightongateway.loadbalancer;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.Response;
+import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
-import org.springframework.cloud.gateway.filter.GlobalFilter;
-import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
-import org.springframework.core.Ordered;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.Objects;
 
-@Component
-@NullMarked
-public class ResponseTimeTrackingFilter implements GlobalFilter, Ordered {
-
-    private static final String TARGET_ROUTE_ID = "ai-route";
+@NullMarked // 이 클래스 안의 모든 파라미터/리턴 타입은 기본적으로 non-null
+public class ResponseTimeTrackingFilter implements GatewayFilter {
 
     private final ResponseTimeRegistry registry;
 
@@ -34,18 +28,16 @@ public class ResponseTimeTrackingFilter implements GlobalFilter, Ordered {
     }
 
     private void recordIdAiRoute(ServerWebExchange exchange, long start) {
-        Route route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
-        if (Objects.isNull(route) || !TARGET_ROUTE_ID.equals(route.getId())) {
-            return;
-        }
+        // Response: 로드밸런서가 인스턴스를 골라낸 결과
+        // 로드밸런싱을 시도했는데 실패할 수도 있음, 실패해서 인스턴스가 없음을 구분할 방법이 필요하고 그것이 hasServer()임
         Response<ServiceInstance> lbResponse = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_LOADBALANCER_RESPONSE_ATTR);
-        if (Objects.isNull(lbResponse) || lbResponse.hasServer()) {
+        if (Objects.isNull(lbResponse) || !lbResponse.hasServer()) {
             return;
         }
         ServiceInstance instance = lbResponse.getServer();
         long elapsed = System.currentTimeMillis() - start;
         if (instance != null) {
-            registry.record(instanceKey(instance), elapsed);
+            registry.recordResponseTime(instanceKey(instance), elapsed);
         }
     }
 
@@ -53,10 +45,5 @@ public class ResponseTimeTrackingFilter implements GlobalFilter, Ordered {
         return instance.getInstanceId() != null
                 ? instance.getInstanceId()
                 : instance.getHost() + ":" + instance.getPort();
-    }
-
-    @Override
-    public int getOrder() {
-        return Ordered.LOWEST_PRECEDENCE;
     }
 }

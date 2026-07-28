@@ -1,5 +1,7 @@
 package com.nhnacademy.insightongateway.config;
 
+import com.nhnacademy.insightongateway.loadbalancer.ResponseTimeRegistry;
+import com.nhnacademy.insightongateway.loadbalancer.ResponseTimeTrackingFilter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -7,6 +9,12 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class GatewayRouteConfig {
+
+    private final ResponseTimeRegistry registry;
+
+    public GatewayRouteConfig(ResponseTimeRegistry registry) {
+        this.registry = registry;
+    }
 
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
@@ -16,7 +24,8 @@ public class GatewayRouteConfig {
                                 "/api/v1/user/**",
                                 "/api/v1/auth/**",
                                 "/api/v1/admin/users/**"
-                        ).uri("lib://INSIGHTON-AUTH"))
+                        )
+                        .uri("lib://INSIGHTON-AUTH"))
 
                 .route("core-route", r -> r
                         .path(
@@ -28,7 +37,8 @@ public class GatewayRouteConfig {
                                 "/api/v1/metric-definitions",
                                 "/api/v1/dashboards/**",
                                 "/api/v1/widgets/**"
-                        ).uri("lb://INSIGHTON-CORE"))
+                        )
+                        .uri("lb://INSIGHTON-CORE"))
 
                 .route("ai-route", r -> r
                         .path(
@@ -36,12 +46,15 @@ public class GatewayRouteConfig {
                                 "/api/v1/suggestions/**",
                                 "/api/v1/hourly-telemetry-stats",
                                 "/api/v1/dashboard-notifications"
-                        ).uri("lb://INSIGHTON-AI"))
+                        )
+                        .filters(gatewayFilterSpec ->  gatewayFilterSpec.filter(new ResponseTimeTrackingFilter(registry)))
+                        .uri("lb://INSIGHTON-AI"))
 
                 .route("ruleengine-route", r -> r
                         .path(
                                 "/api/v1/flows/**"
-                        ).uri("lb://INSIGHTON-RULEENGINE"))
+                        )
+                        .uri("lb://INSIGHTON-RULEENGINE"))
 
                 .build();
 
