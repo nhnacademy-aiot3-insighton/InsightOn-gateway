@@ -1,4 +1,4 @@
-package com.nhnacademy.insightongateway.security;
+package com.nhnacademy.insightongateway.auth;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

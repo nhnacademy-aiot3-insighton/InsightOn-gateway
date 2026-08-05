@@ -1,5 +1,8 @@
-package com.nhnacademy.insightongateway.security;
+package com.nhnacademy.insightongateway.filter;
 
+import com.nhnacademy.insightongateway.auth.TokenBlacklistChecker;
+import com.nhnacademy.insightongateway.common.SecurityConstants;
+import com.nhnacademy.insightongateway.auth.RedisTokenBlacklistChecker;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
@@ -27,9 +30,9 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     public JwtAuthenticationFilter(JwtParser jwtParser,
-                                   TokenBlacklistChecker tokenBlacklistChecker) {
+                                   RedisTokenBlacklistChecker redisTokenBlacklistChecker) {
         this.jwtParser = jwtParser;
-        this.tokenBlacklistChecker = tokenBlacklistChecker;
+        this.tokenBlacklistChecker = redisTokenBlacklistChecker;
     }
 
 
