@@ -5,7 +5,7 @@ import org.springframework.cloud.client.ServiceInstance;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class WeightedInstancePicker {
+public class WeightedInstancePicker implements InstancePickStrategy {
 
     private final ResponseTimeRegistry registry;
 
@@ -13,6 +13,7 @@ public class WeightedInstancePicker {
         this.registry = registry;
     }
 
+    @Override
     public ServiceInstance pick(List<ServiceInstance> instances) {
         if (instances.isEmpty()) {
             return null;

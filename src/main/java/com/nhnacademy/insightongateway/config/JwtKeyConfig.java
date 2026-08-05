@@ -1,5 +1,6 @@
-package com.nhnacademy.insightongateway.security;
+package com.nhnacademy.insightongateway.config;
 
+import com.nhnacademy.insightongateway.auth.JwtProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

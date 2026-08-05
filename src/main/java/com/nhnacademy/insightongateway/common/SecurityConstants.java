@@ -1,4 +1,4 @@
-package com.nhnacademy.insightongateway.security;
+package com.nhnacademy.insightongateway.common;
 
 import java.util.List;
 

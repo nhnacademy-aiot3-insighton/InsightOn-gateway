@@ -1,7 +1,7 @@
 package com.nhnacademy.insightongateway.config;
 
 import com.nhnacademy.insightongateway.loadbalancer.ResponseTimeRegistry;
-import com.nhnacademy.insightongateway.loadbalancer.ResponseTimeTrackingFilter;
+import com.nhnacademy.insightongateway.filter.ResponseTimeTrackingFilter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
