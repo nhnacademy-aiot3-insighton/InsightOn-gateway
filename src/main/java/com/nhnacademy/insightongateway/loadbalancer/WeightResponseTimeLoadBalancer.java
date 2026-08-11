@@ -23,10 +23,10 @@ public class WeightResponseTimeLoadBalancer implements ReactorLoadBalancer<Servi
     private final ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider;
 
     // 실제로 누굴 고를지 판단하는 로직을 담은 객체
-    private final WeightedInstancePicker picker;
+    private final InstancePickStrategy picker;
 
     public WeightResponseTimeLoadBalancer(ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider,
-                                          WeightedInstancePicker picker) {
+                                          InstancePickStrategy picker) {
         this.serviceInstanceListSupplierProvider = serviceInstanceListSupplierProvider;
         this.picker = picker;
     }

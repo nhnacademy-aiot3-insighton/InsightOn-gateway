@@ -1,0 +1,9 @@
+### Eureka에 등록괸 앱 목록 확인
+GET http://localhost:8761/eureka/apps
+Accept: application/json
+
+### Health check
+GET http://localhost:8080/actuator/health
+
+### Gateway routes
+GET http://localhost:8080/actuator/gateway/routes

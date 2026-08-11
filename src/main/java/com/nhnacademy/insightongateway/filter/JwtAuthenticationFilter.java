@@ -1,5 +1,8 @@
-package com.nhnacademy.insightongateway.security;
+package com.nhnacademy.insightongateway.filter;
 
+import com.nhnacademy.insightongateway.auth.TokenBlacklistChecker;
+import com.nhnacademy.insightongateway.common.SecurityConstants;
+import com.nhnacademy.insightongateway.auth.RedisTokenBlacklistChecker;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
@@ -22,14 +25,16 @@ import java.util.Objects;
 @NullMarked
 public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 
+    private static final String ADMIN_ROLE = "ADMIN";
+
     private final JwtParser jwtParser;
     private final TokenBlacklistChecker tokenBlacklistChecker;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     public JwtAuthenticationFilter(JwtParser jwtParser,
-                                   TokenBlacklistChecker tokenBlacklistChecker) {
+                                   RedisTokenBlacklistChecker redisTokenBlacklistChecker) {
         this.jwtParser = jwtParser;
-        this.tokenBlacklistChecker = tokenBlacklistChecker;
+        this.tokenBlacklistChecker = redisTokenBlacklistChecker;
     }
 
 
@@ -37,7 +42,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getURI().getPath();
         if (isExcludePath(path)) {
-            return chain.filter(exchange);
+            return chain.filter(stripTrustedHeaders(exchange));
         }
         String token = extractToken(exchange.getRequest());
         if (Objects.isNull(token)) {
@@ -92,21 +97,31 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 
     private ServerWebExchange mutateExchange(ServerWebExchange exchange, Claims claims) {
         ServerHttpRequest.Builder requestBuilder = exchange.getRequest().mutate();
+
+        requestBuilder.headers(this::removeTrustedHeaders);
+
         String userId = claims.getSubject();
         if (userId != null) {
             requestBuilder.header("X-User-Id", userId);
         }
 
-        String role = extractRole(claims);
-        if (role != null) {
-            requestBuilder.header("X-User-Role", role);
+        String role = claims.get("role", String.class);
+        if (ADMIN_ROLE.equals(role)) {
+            requestBuilder.header("X-User-Role", ADMIN_ROLE);
         }
 
         return exchange.mutate().request(requestBuilder.build()).build();
     }
 
-    @SuppressWarnings("ConstantConditions")
-    private @Nullable String extractRole(Claims claims) {
-        return claims.get("role", String.class);
+    private ServerWebExchange stripTrustedHeaders(ServerWebExchange exchange) {
+        ServerHttpRequest strippedRequest = exchange.getRequest().mutate()
+                .headers(this::removeTrustedHeaders)
+                .build();
+        return exchange.mutate().request(strippedRequest).build();
+    }
+
+    private void removeTrustedHeaders(HttpHeaders headers) {
+        headers.remove("X-User-Id");
+        headers.remove("X-User-Role");
     }
 }

@@ -1,7 +1,7 @@
 package com.nhnacademy.insightongateway.config;
 
 import com.nhnacademy.insightongateway.loadbalancer.ResponseTimeRegistry;
-import com.nhnacademy.insightongateway.loadbalancer.ResponseTimeTrackingFilter;
+import com.nhnacademy.insightongateway.filter.ResponseTimeTrackingFilter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -45,7 +45,9 @@ public class GatewayRouteConfig {
                                 "/api/v1/reports/**",
                                 "/api/v1/suggestions/**",
                                 "/api/v1/hourly-telemetry-stats",
-                                "/api/v1/dashboard-notifications"
+                                "/api/v1/dashboard-notifications",
+                                "/api/v1/engine-alerts/**",
+                                "/api/v1/chat"
                         )
                         .filters(gatewayFilterSpec ->  gatewayFilterSpec.filter(new ResponseTimeTrackingFilter(registry)))
                         .uri("lb://INSIGHTON-AI"))
@@ -55,6 +57,27 @@ public class GatewayRouteConfig {
                                 "/api/v1/flows/**"
                         )
                         .uri("lb://INSIGHTON-RULEENGINE"))
+
+                .route("auth-api-docs", r -> r
+                        .path("/auth/v3/api-docs")
+                        .filters(f -> f.stripPrefix(1))
+                        .uri("lb://INSIGHTON-AUTH"))
+
+                .route("core-api-docs", r -> r
+                        .path("/core/v3/api-docs")
+                        .filters(f -> f.stripPrefix(1))
+                        .uri("lb://INSIGHTON-CORE"))
+
+                .route("ai-api-docs", r -> r
+                        .path("/ai/v3/api-docs")
+                        .filters(f -> f.stripPrefix(1))
+                        .uri("lb://INSIGHTON-AI"))
+
+                .route("ruleengine-api-docs", r -> r
+                        .path("/ruleengine/v3/api-docs")
+                        .filters(f -> f.stripPrefix(1))
+                        .uri("lb://INSIGHTON-RULEENGINE"))
+
 
                 .build();
     }

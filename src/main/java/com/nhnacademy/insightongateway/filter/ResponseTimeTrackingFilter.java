@@ -1,5 +1,6 @@
-package com.nhnacademy.insightongateway.loadbalancer;
+package com.nhnacademy.insightongateway.filter;
 
+import com.nhnacademy.insightongateway.loadbalancer.ResponseTimeRegistry;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.Response;

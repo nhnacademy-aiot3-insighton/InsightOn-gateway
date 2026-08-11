@@ -1,4 +1,4 @@
-package com.nhnacademy.insightongateway.security;
+package com.nhnacademy.insightongateway.config;
 
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
