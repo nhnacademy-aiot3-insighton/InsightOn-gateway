@@ -1,20 +1,11 @@
 package com.nhnacademy.insightongateway;
 
-import com.nhnacademy.insightongateway.config.AiLoadBalancerConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClient;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @SpringBootApplication
-@EnableDiscoveryClient
-@ComponentScan(excludeFilters = @ComponentScan.Filter(
-        type = FilterType.ASSIGNABLE_TYPE,
-        classes = AiLoadBalancerConfig.class
-))
-@LoadBalancerClient(value = "insighton-ai", configuration = AiLoadBalancerConfig.class)
+@ConfigurationPropertiesScan
 public class InsightonGatewayApplication {
 
     public static void main(String[] args) {

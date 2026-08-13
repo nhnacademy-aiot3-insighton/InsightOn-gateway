@@ -1,7 +1,6 @@
 package com.nhnacademy.insightongateway.config;
 
 import com.nhnacademy.insightongateway.auth.JwtProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,17 +12,16 @@ import java.util.Base64;
 import java.util.Objects;
 
 @Configuration
-@EnableConfigurationProperties(JwtProperties.class)
 public class JwtKeyConfig {
 
     @Bean
     public PublicKey jwtPublicKey(JwtProperties jwtProperties) {
-        String base64Pem = jwtProperties.getPublicKeyBase64();
+        String base64Pem = jwtProperties.publicKeyBase64();
         if (Objects.isNull(base64Pem)) {
             throw new IllegalStateException("[JwtKeyConfig] jwt.public-key-base64 is null");
         }
         try {
-            byte[] pemBytes = Base64.getDecoder().decode(jwtProperties.getPublicKeyBase64());
+            byte[] pemBytes = Base64.getDecoder().decode(jwtProperties.publicKeyBase64());
             String pemText = new String(pemBytes, StandardCharsets.UTF_8);
 
             String keyBody = pemText

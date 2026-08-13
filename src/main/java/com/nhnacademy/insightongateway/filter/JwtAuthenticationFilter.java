@@ -1,8 +1,7 @@
 package com.nhnacademy.insightongateway.filter;
 
-import com.nhnacademy.insightongateway.auth.TokenBlacklistChecker;
+import com.nhnacademy.insightongateway.auth.AuthServiceTokenBlacklistChecker;
 import com.nhnacademy.insightongateway.common.SecurityConstants;
-import com.nhnacademy.insightongateway.auth.RedisTokenBlacklistChecker;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
@@ -28,15 +27,13 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     private static final String ADMIN_ROLE = "ADMIN";
 
     private final JwtParser jwtParser;
-    private final TokenBlacklistChecker tokenBlacklistChecker;
+    private final AuthServiceTokenBlacklistChecker tokenBlacklistChecker;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
-    public JwtAuthenticationFilter(JwtParser jwtParser,
-                                   RedisTokenBlacklistChecker redisTokenBlacklistChecker) {
+    public JwtAuthenticationFilter(JwtParser jwtParser, AuthServiceTokenBlacklistChecker tokenBlacklistChecker) {
         this.jwtParser = jwtParser;
-        this.tokenBlacklistChecker = redisTokenBlacklistChecker;
+        this.tokenBlacklistChecker = tokenBlacklistChecker;
     }
-
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
