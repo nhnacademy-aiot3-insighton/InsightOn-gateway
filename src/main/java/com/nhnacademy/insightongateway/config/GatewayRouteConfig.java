@@ -29,7 +29,8 @@ public class GatewayRouteConfig {
                                 "/api/v1/actuators/**",
                                 "/api/v1/metric-definitions",
                                 "/api/v1/dashboards/**",
-                                "/api/v1/widgets/**"
+                                "/api/v1/widgets/**",
+                                "api/v1/group-registrations/**"
                         )
                         .uri(gatewayRouteProperties.core()))
 
