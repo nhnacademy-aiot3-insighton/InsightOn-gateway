@@ -25,16 +25,14 @@ public class AuthServiceTokenBlacklistChecker {
         return webClient.get()
                 .uri("/api/v1/auth/tokens/{jti}/blacklisted", jti)
                 .retrieve()
-                .bodyToMono(BlacklistStatusResponse.class)
-                .map(BlacklistStatusResponse::blacklisted)
+                // Auth가 일반 Boolean값 넘겨줌 (true or false)
+                // 기존의 BlacklistStatusResponse record는 { "blacklisted": bool } 이 형태를 원했어서 타입 에러
+                .bodyToMono(Boolean.class)
                 .timeout(TIMEOUT)
                 // auth 서비스 장애/타임아웃 시 fail-closed: 확인 불가한 토큰은 일단 거부한다
                 .onErrorResume(e -> {
                     log.warn("[AuthServiceTokenBlacklistChecker] auth 서비스 블랙리스트 확인 실패, fail-closed 처리 (jti={})", jti, e);
                     return Mono.just(true);
                 });
-    }
-
-    private record BlacklistStatusResponse(boolean blacklisted) {
     }
 }
