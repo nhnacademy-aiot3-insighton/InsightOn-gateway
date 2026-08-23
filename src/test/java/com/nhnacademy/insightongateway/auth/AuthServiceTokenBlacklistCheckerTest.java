@@ -44,7 +44,7 @@ class AuthServiceTokenBlacklistCheckerTest {
 
     @Test
     void blacklistedTrue_returnsTrue() throws IOException {
-        String baseUrl = startStubServer(200, "{\"blacklisted\": true}");
+        String baseUrl = startStubServer(200, "true");
         AuthServiceTokenBlacklistChecker checker = checkerFor(baseUrl);
 
         StepVerifier.create(checker.isBlacklisted("jti-1"))
@@ -54,7 +54,7 @@ class AuthServiceTokenBlacklistCheckerTest {
 
     @Test
     void blacklistedFalse_returnsFalse() throws IOException {
-        String baseUrl = startStubServer(200, "{\"blacklisted\": false}");
+        String baseUrl = startStubServer(200, "false");
         AuthServiceTokenBlacklistChecker checker = checkerFor(baseUrl);
 
         StepVerifier.create(checker.isBlacklisted("jti-1"))

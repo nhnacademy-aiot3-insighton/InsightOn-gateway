@@ -20,16 +20,16 @@ public class GatewayRouteConfig {
                         )
                         .uri(gatewayRouteProperties.auth()))
 
+                // Core route 변경
+                // location, actuator, dashboards가 group/{group-id} 하위에 묶여있어서 제거
                 .route("core-route", r -> r
                         .path(
                                 "/api/v1/groups/**",
-                                "/api/v1/locations/**",
                                 "/api/v1/gateways/**",
-                                "/api/v1/devices/**",
-                                "/api/v1/actuators/**",
-                                "/api/v1/metric-definitions",
-                                "/api/v1/dashboards/**",
-                                "/api/v1/widgets/**"
+                                "/api/v1/sensor/**",
+                                "/api/v1/weather/**",
+                                "/api/v1/regions/**",
+                                "/api/v1/group-registrations/**"
                         )
                         .uri(gatewayRouteProperties.core()))
 
