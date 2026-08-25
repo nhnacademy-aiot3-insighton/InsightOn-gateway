@@ -176,7 +176,7 @@ class JwtAuthenticationFilterTest {
 
     @Test
     void wildcardExcludedPath_bypassesAuthAndStripsTrustedHeaders() {
-        MockServerHttpRequest request = MockServerHttpRequest.get("/api/v1/user/oauth/callback")
+        MockServerHttpRequest request = MockServerHttpRequest.get("/api/v1/auth/oauth/callback")
                 .header("X-User-Role", "ADMIN")
                 .build();
         ServerWebExchange exchange = MockServerWebExchange.from(request);

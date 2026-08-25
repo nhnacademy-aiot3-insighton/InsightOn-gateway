@@ -17,7 +17,6 @@ public class SecurityConstants {
             "/api/v1/auth/password/**",
             "/api/v1/auth/reactive",
             "/api/v1/auth/reactivate/**",
-            "/api/v1/user/oauth/**",
             "/api/v1/auth/oauth/**",
             "/auth/v3/api-docs",
             "/core/v3/api-docs",
