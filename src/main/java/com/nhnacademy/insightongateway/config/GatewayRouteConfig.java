@@ -37,10 +37,10 @@ public class GatewayRouteConfig {
                         .path(
                                 "/api/v1/reports/**",
                                 "/api/v1/suggestions/**",
-                                "/api/v1/hourly-telemetry-stats",
-                                "/api/v1/dashboard-notifications",
+                                "/api/v1/hourly-telemetry-stats/**",
+                                "/api/v1/dashboard-notifications/**",
                                 "/api/v1/engine-alerts/**",
-                                "/api/v1/chat"
+                                "/api/v1/chat/**"
                         )
                         .uri(gatewayRouteProperties.ai()))
 
