@@ -106,6 +106,14 @@ class GatewayRouteConfigTest {
     }
 
     @Test
+    void aiRoute_matchesAiSubPaths() {
+        // SSE 스트림처럼 베이스 경로 하위로 들어오는 요청도 매칭돼야 한다 (dashboard-notifications/stream 등).
+        assertMatches("ai-route", "/api/v1/hourly-telemetry-stats/hourly");
+        assertMatches("ai-route", "/api/v1/dashboard-notifications/stream");
+        assertMatches("ai-route", "/api/v1/chat/123");
+    }
+
+    @Test
     void ruleengineRoute_matchesFlowsPath() {
         assertMatches("ruleengine-route", "/api/v1/flows/1");
         assertDoesNotMatch("ruleengine-route", "/api/v1/chat");

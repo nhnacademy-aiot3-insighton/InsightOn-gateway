@@ -47,7 +47,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         }
         Claims claims;
         try {
-            claims = jwtParser.parseSignedClaims(token).getPayload(); // 서명 검증 + 만료 확인 (SignatureException, ExpiredJwtException 발생 가능)
+            claims = jwtParser.parseSignedClaims(token).getPayload();
         } catch (JwtException e) {
             return unauthorized(exchange, "INVALID_TOKEN");
         }
@@ -68,7 +68,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
+        return Ordered.HIGHEST_PRECEDENCE + 1;
     }
 
     private Mono<Void> unauthorized(ServerWebExchange exchange, String reason) {
