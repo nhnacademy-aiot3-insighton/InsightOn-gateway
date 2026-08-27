@@ -8,12 +8,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+
+import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,7 +47,7 @@ class AccessLogFilterTest {
 
     private String lastMessage() {
         assertThat(appender.list).isNotEmpty();
-        return appender.list.get(appender.list.size() - 1).getFormattedMessage();
+        return appender.list.getLast().getFormattedMessage();
     }
 
     @Test
@@ -58,9 +61,12 @@ class AccessLogFilterTest {
         StepVerifier.create(filter.filter(exchange, chain)).verifyComplete();
 
         String message = lastMessage();
-        assertThat(message).contains("GET").contains("/api/v1/reports/1").contains("status=200");
-        assertThat(message).doesNotContain("CANCELED");
-        assertThat(message).doesNotContain("authError=");
+        assertThat(message)
+                .contains("GET")
+                .contains("/api/v1/reports/1")
+                .contains("status=200")
+                .doesNotContain("CANCELED")
+                .doesNotContain("authError=");
     }
 
     @Test
@@ -79,8 +85,8 @@ class AccessLogFilterTest {
     @Test
     void clientCancels_logsCanceledWithDisconnectedMarker() {
         ServerWebExchange exchange = exchange("/api/v1/dashboard-notifications/stream");
-        exchange.getResponse().setStatusCode(HttpStatus.OK); // 이미 커밋된 SSE 응답을 흉내
-        GatewayFilterChain chain = ex -> Mono.never(); // 클라이언트가 끊기 전까지 계속 열려있는 스트림을 흉내
+        exchange.getResponse().setStatusCode(HttpStatus.OK);
+        GatewayFilterChain chain = ex -> Mono.never();
 
         StepVerifier.create(filter.filter(exchange, chain))
                 .thenCancel()
@@ -112,5 +118,25 @@ class AccessLogFilterTest {
         StepVerifier.create(filter.filter(exchange, chain)).verifyComplete();
 
         assertThat(lastMessage()).doesNotContain("authError=");
+    }
+
+    @Test
+    void pathWithEncodedCrlf_doesNotForgeLogLines() throws Exception {
+        // URI(String) 생성자는 이미 percent-encode된 문자열을 다시 인코딩하지 않으므로,
+        // getRawPath()는 "%0D%0A"를 그대로 유지하지만 getPath()는 실제 CR/LF로 디코드해버린다.
+        // 그대로 로그에 쓰면 가짜 로그 라인을 주입(log forging)할 수 있다.
+        URI uri = new URI("http://localhost/api/v1/reports/1%0D%0Aforged-status=200");
+        ServerWebExchange exchange = MockServerWebExchange.from(
+                MockServerHttpRequest.method(HttpMethod.GET, uri).build());
+        GatewayFilterChain chain = ex -> {
+            ex.getResponse().setStatusCode(HttpStatus.OK);
+            return Mono.empty();
+        };
+
+        StepVerifier.create(filter.filter(exchange, chain)).verifyComplete();
+
+        String message = lastMessage();
+        assertThat(message).doesNotContain("\r").doesNotContain("\n");
+        assertThat(appender.list).hasSize(1);
     }
 }

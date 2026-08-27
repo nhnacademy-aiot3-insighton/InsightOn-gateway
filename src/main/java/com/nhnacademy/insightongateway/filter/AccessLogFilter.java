@@ -36,15 +36,21 @@ public class AccessLogFilter implements GlobalFilter, Ordered {
         long elapsedMs = Duration.between(start, Instant.now()).toMillis();
         HttpStatusCode status = exchange.getResponse().getStatusCode();
         String authError = exchange.getResponse().getHeaders().getFirst("X-Auth-Error");
-        String authErrorSuffix = authError == null ? "" : " authError=" + authError;
+        String authErrorSuffix = authError == null ? "" : " authError=" + sanitize(authError);
+
+        String path = sanitize(request.getURI().getRawPath());
 
         if (signalType == SignalType.CANCEL) {
             log.info("[AccessLog] {} {} CANCELED status={} elapsedMs={}{} (client disconnected)",
-                    request.getMethod(), request.getURI().getPath(), status, elapsedMs, authErrorSuffix);
+                    request.getMethod(), path, status, elapsedMs, authErrorSuffix);
         } else {
             log.info("[AccessLog] {} {} {} status={} elapsedMs={}{}",
-                    request.getMethod(), request.getURI().getPath(), signalType, status, elapsedMs, authErrorSuffix);
+                    request.getMethod(), path, signalType, status, elapsedMs, authErrorSuffix);
         }
+    }
+
+    private String sanitize(String value) {
+        return value.replace("\r", "").replace("\n", "");
     }
 
     @Override
