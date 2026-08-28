@@ -18,6 +18,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -102,8 +103,8 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
             requestBuilder.header("X-User-Id", userId);
         }
 
-        String role = claims.get("role", String.class);
-        if (ADMIN_ROLE.equals(role)) {
+        List<?> roles = claims.get("roles", List.class);
+        if (Objects.nonNull(roles) && roles.contains(ADMIN_ROLE)) {
             requestBuilder.header("X-User-Role", ADMIN_ROLE);
         }
 
