@@ -20,6 +20,7 @@ import reactor.test.StepVerifier;
 
 import java.security.KeyPair;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
@@ -59,7 +60,7 @@ class JwtAuthenticationFilterTest {
             builder.id(jti);
         }
         if (role != null) {
-            builder.claim("role", role);
+            builder.claim("roles", List.of(role));
         }
         return builder.compact();
     }
