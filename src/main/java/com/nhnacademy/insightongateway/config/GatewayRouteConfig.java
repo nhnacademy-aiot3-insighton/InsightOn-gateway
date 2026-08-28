@@ -14,9 +14,9 @@ public class GatewayRouteConfig {
         return builder.routes()
                 .route("auth-route", r -> r
                         .path(
-                                "/api/v1/user/**",
+                                "/api/v1/users/**",
                                 "/api/v1/auth/**",
-                                "/api/v1/admin/users/**"
+                                "/api/v1/admin/**"
                         )
                         .uri(gatewayRouteProperties.auth()))
 
