@@ -78,7 +78,7 @@ class GatewayRouteConfigTest {
     @Test
     void authRoute_matchesAuthUserAndAdminPaths() {
         assertMatches("auth-route", "/api/v1/auth/login");
-        assertMatches("auth-route", "/api/v1/user/me");
+        assertMatches("auth-route", "/api/v1/users/me");
         assertMatches("auth-route", "/api/v1/admin/users/1");
         assertDoesNotMatch("auth-route", "/api/v1/groups/1");
     }
