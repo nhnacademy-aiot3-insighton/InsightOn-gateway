@@ -57,8 +57,8 @@ class GatewayRouteConfigTest {
     @Test
     void allExpectedRoutesAreDefined() {
         assertThat(routesById.keySet()).containsExactlyInAnyOrder(
-                "auth-route", "core-route", "ai-route", "ruleengine-route",
-                "auth-api-docs", "core-api-docs", "ai-api-docs", "ruleengine-api-docs"
+                "auth-route", "core-route", "ai-route", "engine-route",
+                "auth-api-docs", "core-api-docs", "ai-api-docs", "engine-api-docs"
         );
     }
 
@@ -67,12 +67,12 @@ class GatewayRouteConfigTest {
         assertThat(route("auth-route").getUri()).hasToString("http://localhost:8000");
         assertThat(route("core-route").getUri()).hasToString("http://localhost:8300");
         assertThat(route("ai-route").getUri()).hasToString("http://localhost:8100");
-        assertThat(route("ruleengine-route").getUri()).hasToString("http://localhost:8200");
+        assertThat(route("engine-route").getUri()).hasToString("http://localhost:8200");
 
         assertThat(route("auth-api-docs").getUri()).hasToString("http://localhost:8000");
         assertThat(route("core-api-docs").getUri()).hasToString("http://localhost:8300");
         assertThat(route("ai-api-docs").getUri()).hasToString("http://localhost:8100");
-        assertThat(route("ruleengine-api-docs").getUri()).hasToString("http://localhost:8200");
+        assertThat(route("engine-api-docs").getUri()).hasToString("http://localhost:8200");
     }
 
     @Test
@@ -114,9 +114,9 @@ class GatewayRouteConfigTest {
     }
 
     @Test
-    void ruleengineRoute_matchesFlowsPath() {
-        assertMatches("ruleengine-route", "/api/v1/flows/1");
-        assertDoesNotMatch("ruleengine-route", "/api/v1/chat");
+    void engineRoute_matchesFlowsPath() {
+        assertMatches("engine-route", "/api/v1/flows/1");
+        assertDoesNotMatch("engine-route", "/api/v1/chat");
     }
 
     @Test
@@ -126,7 +126,7 @@ class GatewayRouteConfigTest {
 
         assertMatches("core-api-docs", "/core/v3/api-docs");
         assertMatches("ai-api-docs", "/ai/v3/api-docs");
-        assertMatches("ruleengine-api-docs", "/ruleengine/v3/api-docs");
+        assertMatches("engine-api-docs", "/engine/v3/api-docs");
     }
 
     private Route route(String id) {
