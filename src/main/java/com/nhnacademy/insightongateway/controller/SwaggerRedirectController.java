@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @RestController
@@ -22,6 +23,7 @@ public class SwaggerRedirectController {
             <!DOCTYPE html>
             <html>
             <head>
+                <meta charset="UTF-8" />
                 <title>Swagger UI</title>
                 <link rel="stylesheet" href="/webjars/swagger-ui/swagger-ui.css" />
             </head>
@@ -52,7 +54,7 @@ public class SwaggerRedirectController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok()
-                .contentType(MediaType.TEXT_HTML)
+                .contentType(new MediaType("text", "html", StandardCharsets.UTF_8))
                 .body(SWAGGER_UI_HTML.formatted(apiDocsPath));
     }
 }
