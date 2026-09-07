@@ -44,7 +44,7 @@ public class GatewayRouteConfig {
                         )
                         .uri(gatewayRouteProperties.ai()))
 
-                .route("ruleengine-route", r -> r
+                .route("engine-route", r -> r
                         .path(
                                 "/api/v1/flows/**"
                         )
