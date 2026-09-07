@@ -23,12 +23,12 @@ public class SwaggerRedirectController {
             <html>
             <head>
                 <title>Swagger UI</title>
-                <link rel="stylesheet" href="/swagger-ui/swagger-ui.css" />
+                <link rel="stylesheet" href="/webjars/swagger-ui/swagger-ui.css" />
             </head>
             <body>
                 <div id="swagger-ui"></div>
-                <script src="/swagger-ui/swagger-ui-bundle.js"></script>
-                <script src="/swagger-ui/swagger-ui-standalone-preset.js"></script>
+                <script src="/webjars/swagger-ui/swagger-ui-bundle.js"></script>
+                <script src="/webjars/swagger-ui/swagger-ui-standalone-preset.js"></script>
                 <script>
                     window.onload = function () {
                         SwaggerUIBundle({
