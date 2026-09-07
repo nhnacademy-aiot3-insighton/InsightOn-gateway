@@ -21,6 +21,8 @@ public class SecurityConstants {
             "/auth/v3/api-docs",
             "/core/v3/api-docs",
             "/ai/v3/api-docs",
-            "/engine/v3/api-docs"
+            "/engine/v3/api-docs",
+            "/swagger/**",
+            "/webjars/**"
     );
 }
